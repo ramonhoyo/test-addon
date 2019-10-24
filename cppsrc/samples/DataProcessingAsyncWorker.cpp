@@ -1,14 +1,11 @@
 #include "DataProcessingAsyncWorker.h"
 #include <iostream>
-//#include "napi-thread-safe-callback.hpp"
 
 Napi::Object DataProcessingAsyncWorker::Init(Napi::Env env, Napi::Object exports){
     Napi::HandleScope scope(env);
     exports.Set("ProcessData", Napi::Function::New(env, DataProcessingAsyncWorker::ProcessData));
     return exports;
 }
-
-
 
 Napi::Value DataProcessingAsyncWorker::ProcessData(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
