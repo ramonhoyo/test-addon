@@ -51,6 +51,8 @@ void DataProcessingAsyncWorker::Execute() {
 }
 
 void DataProcessingAsyncWorker::OnOK() {
-    Callback().Call({});
+    Callback().Call({
+         Napi::Number::New(Env(), 0)
+    });
     dataRef.Unref();
 }
