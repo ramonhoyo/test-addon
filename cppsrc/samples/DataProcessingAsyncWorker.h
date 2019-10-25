@@ -2,6 +2,7 @@
 #define __DATA_PROCESSING_ASYNC__
 
 #include <napi.h>
+#include "napi-thread-safe-callback.hpp"
 
 class DataProcessingAsyncWorker : public Napi::AsyncWorker {
 public:
@@ -14,6 +15,7 @@ public:
     Napi::ObjectReference dataRef;
     uint8_t *dataPtr;
     size_t dataLength;
+    std::shared_ptr<ThreadSafeCallback> callbackShared;
     Napi::Env __env;
 };
 

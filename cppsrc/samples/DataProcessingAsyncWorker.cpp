@@ -1,6 +1,7 @@
 #include "DataProcessingAsyncWorker.h"
 #include <iostream>
 
+
 Napi::Object DataProcessingAsyncWorker::Init(Napi::Env env, Napi::Object exports){
     Napi::HandleScope scope(env);
     exports.Set("ProcessData", Napi::Function::New(env, DataProcessingAsyncWorker::ProcessData));
@@ -29,7 +30,7 @@ DataProcessingAsyncWorker::DataProcessingAsyncWorker(
     dataLength(data.Length()),
     __env(data.Env())
 {
-
+    callbackShared = std::make_shared<ThreadSafeCallback>(callback);
 }
 
 void DataProcessingAsyncWorker::Execute() {
@@ -38,12 +39,15 @@ void DataProcessingAsyncWorker::Execute() {
         uint8_t value = *(dataPtr + i);
         *(dataPtr + i) = value * 2;
         if(!((i+1)%percentStep)){
-            std::cout << "processing " << ((i+1)*100)/dataLength << " %\n";
-             Callback().Call({
-                 Napi::Number::New(__env, i)
-             });
+            int currentProgress =  ((i+1)*100)/dataLength;
+            callbackShared->call([currentProgress](Napi::Env env, std::vector<napi_value>& args){
+                args = { Napi::Number::New(env, currentProgress) };
+            });
         }
     }
+    callbackShared->call([](Napi::Env env, std::vector<napi_value>& args){
+        args = { Napi::Number::New(env, 100) };
+    });
 }
 
 void DataProcessingAsyncWorker::OnOK() {

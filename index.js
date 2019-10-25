@@ -24,9 +24,6 @@ console.time('Data manipulation');
 
 testAddon.ProcessData(buf, (p) => {
     console.log(p);
-    console.timeEnd('Data manipulation');
-    fs.writeFileSync('test-data-modified', buf);
-    console.timeEnd('Program runtime');
 });
 
 console.timeEnd('Time spent by native addon on main event loop thread');
